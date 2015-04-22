@@ -95,7 +95,7 @@ public class ActionProcessButton extends ProcessButton {
     @Override
     public void drawProgress(Canvas canvas) {
         if(getBackground() != getNormalDrawable()) {
-            setBackgroundDrawable(getNormalDrawable());
+            setBackgroundCompat(getNormalDrawable());
         }
 
         switch (mMode) {

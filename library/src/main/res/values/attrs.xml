@@ -1,0 +1,17 @@
+<resources>
+    <declare-styleable name="ProcessButton">
+        <attr name="pb_textProgress" format="string|reference" />
+        <attr name="pb_textComplete" format="string|reference" />
+        <attr name="pb_textError" format="string|reference" />
+        <attr name="pb_colorProgress" format="color|reference" />
+        <attr name="pb_colorComplete" format="color|reference" />
+        <attr name="pb_colorError" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="FlatButton">
+        <attr name="pb_colorPressed" format="color|reference" />
+        <attr name="pb_colorNormal" format="color|reference" />
+        <attr name="pb_colorDisabled" format="color|reference" />
+        <attr name="pb_cornerRadius" format="dimension|reference" />
+    </declare-styleable>
+</resources>
