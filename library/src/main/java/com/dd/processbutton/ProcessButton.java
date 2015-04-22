@@ -30,6 +30,7 @@ public abstract class ProcessButton extends FlatButton {
 
     private boolean autoResumeToNormalState;
     private boolean autoResumeTaskPosted;
+    private int autoResumeToNormalStateDelay = 2000;
     private Runnable autoResumeToNormalStateTask = new Runnable() {
         @Override
         public void run() {
@@ -104,6 +105,7 @@ public abstract class ProcessButton extends FlatButton {
             mErrorText = attr.getText(R.styleable.ProcessButton_pb_textError);
             blockClicksWhenLoading = attr.getBoolean(R.styleable.ProcessButton_pb_blockClicksWhenLoading, blockClicksWhenLoading);
             autoResumeToNormalState = attr.getBoolean(R.styleable.ProcessButton_pb_autoResumeToNormal, autoResumeToNormalState);
+            autoResumeToNormalStateDelay = attr.getInt(R.styleable.ProcessButton_pb_autoResumeToNormalDelay, autoResumeToNormalStateDelay);
 
             int purple = getColor(R.color.purple_progress);
             setColor(mProgressDrawable, attr, R.styleable.ProcessButton_pb_colorProgress, purple);
@@ -204,7 +206,7 @@ public abstract class ProcessButton extends FlatButton {
         Handler handler = getHandler();
         if (handler != null) {
             autoResumeTaskPosted = true;
-            handler.postDelayed(autoResumeToNormalStateTask, 700);
+            handler.postDelayed(autoResumeToNormalStateTask, autoResumeToNormalStateDelay);
         }
     }
 
