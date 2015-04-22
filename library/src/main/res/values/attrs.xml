@@ -13,6 +13,8 @@
         <attr name="pb_colorProgress" format="color|reference" />
         <attr name="pb_colorComplete" format="color|reference" />
         <attr name="pb_colorError" format="color|reference" />
+        <attr name="pb_autoResumeToNormal" format="boolean|reference" />
+        <attr name="pb_blockClicksWhenLoading" format="boolean|reference" />
     </declare-styleable>
 
     <declare-styleable name="FlatButton">

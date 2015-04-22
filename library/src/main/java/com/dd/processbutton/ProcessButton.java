@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.View;
 
 public abstract class ProcessButton extends FlatButton {
 
@@ -21,6 +23,22 @@ public abstract class ProcessButton extends FlatButton {
     private CharSequence mLoadingText;
     private CharSequence mCompleteText;
     private CharSequence mErrorText;
+
+    private boolean blockClicksWhenLoading;
+
+    private OnClickListener onClickListener;
+
+    private boolean autoResumeToNormalState;
+    private boolean autoResumeTaskPosted;
+    private Runnable autoResumeToNormalStateTask = new Runnable() {
+        @Override
+        public void run() {
+            autoResumeTaskPosted = false;
+            if (isErrorState() || isCompleteState()) {
+                setProgress(0);
+            }
+        }
+    };
 
     public ProcessButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -53,6 +71,24 @@ public abstract class ProcessButton extends FlatButton {
         if (attrs != null) {
             initAttributes(context, attrs);
         }
+
+        super.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (blockClicksWhenLoading && isProgressState()) {
+                    return;
+                }
+
+                if (autoResumeToNormalState
+                        && (isErrorState() || isCompleteState())) {
+                    setProgress(0);
+                }
+
+                if (onClickListener != null) {
+                    onClickListener.onClick(v);
+                }
+            }
+        });
     }
 
     private void initAttributes(Context context, AttributeSet attributeSet) {
@@ -66,6 +102,8 @@ public abstract class ProcessButton extends FlatButton {
             mLoadingText = attr.getText(R.styleable.ProcessButton_pb_textProgress);
             mCompleteText = attr.getText(R.styleable.ProcessButton_pb_textComplete);
             mErrorText = attr.getText(R.styleable.ProcessButton_pb_textError);
+            blockClicksWhenLoading = attr.getBoolean(R.styleable.ProcessButton_pb_blockClicksWhenLoading, blockClicksWhenLoading);
+            autoResumeToNormalState = attr.getBoolean(R.styleable.ProcessButton_pb_autoResumeToNormal, autoResumeToNormalState);
 
             int purple = getColor(R.color.purple_progress);
             setColor(mProgressDrawable, attr, R.styleable.ProcessButton_pb_colorProgress, purple);
@@ -80,14 +118,27 @@ public abstract class ProcessButton extends FlatButton {
         }
     }
 
+    @Override
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    public void setAutoResumeToNormalState(boolean autoResumeToNormalState) {
+        this.autoResumeToNormalState = autoResumeToNormalState;
+    }
+
+    public void setBlockClicksWhenLoading(boolean blockClicksWhenLoading) {
+        this.blockClicksWhenLoading = blockClicksWhenLoading;
+    }
+
     public void setProgress(int progress) {
         mProgress = progress;
 
-        if (mProgress == mMinProgress) {
+        if (isNormalState()) {
             onNormalState();
-        } else if (mProgress == mMaxProgress) {
+        } else if (isCompleteState()) {
             onCompleteState();
-        } else if (mProgress < mMinProgress){
+        } else if (isErrorState()){
             onErrorState();
         } else {
             onProgress();
@@ -96,11 +147,28 @@ public abstract class ProcessButton extends FlatButton {
         invalidate();
     }
 
+    public boolean isErrorState() {
+        return mProgress < mMinProgress;
+    }
+
+    public boolean isCompleteState() {
+        return mProgress >= mMaxProgress;
+    }
+
+    public boolean isNormalState() {
+        return mProgress == mMinProgress;
+    }
+
+    public boolean isProgressState() {
+        return mProgress > mMinProgress && mProgress < mMaxProgress;
+    }
+
     protected void onErrorState() {
         if(getErrorText() != null) {
             setText(getErrorText());
         }
         setBackgroundCompat(getErrorDrawable());
+        returnToNormalStateIfNeeded();
     }
 
     protected void onProgress() {
@@ -108,6 +176,7 @@ public abstract class ProcessButton extends FlatButton {
             setText(getLoadingText());
         }
         setBackgroundCompat(getNormalDrawable());
+        cancelReturnToNormalTask();
     }
 
     protected void onCompleteState() {
@@ -115,6 +184,7 @@ public abstract class ProcessButton extends FlatButton {
             setText(getCompleteText());
         }
         setBackgroundCompat(getCompleteDrawable());
+        returnToNormalStateIfNeeded();
     }
 
     protected void onNormalState() {
@@ -122,6 +192,28 @@ public abstract class ProcessButton extends FlatButton {
             setText(getNormalText());
         }
         setBackgroundCompat(getNormalDrawable());
+        cancelReturnToNormalTask();
+    }
+
+    private void returnToNormalStateIfNeeded() {
+        if (!autoResumeToNormalState
+                || autoResumeTaskPosted) {
+            return;
+        }
+
+        Handler handler = getHandler();
+        if (handler != null) {
+            autoResumeTaskPosted = true;
+            handler.postDelayed(autoResumeToNormalStateTask, 700);
+        }
+    }
+
+    private void cancelReturnToNormalTask() {
+        autoResumeTaskPosted = false;
+        Handler handler = getHandler();
+        if (handler != null) {
+            handler.removeCallbacks(autoResumeToNormalStateTask);
+        }
     }
 
     @Override
