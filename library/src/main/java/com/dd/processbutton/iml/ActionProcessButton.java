@@ -1,5 +1,6 @@
 package com.dd.processbutton.iml;
 
+import android.content.res.TypedArray;
 import com.dd.processbutton.ProcessButton;
 import com.dd.processbutton.R;
 
@@ -57,20 +58,20 @@ public class ActionProcessButton extends ProcessButton {
 
     public ActionProcessButton(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     public ActionProcessButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
     public ActionProcessButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context);
+        init(context, attrs);
     }
 
-    private void init(Context context) {
+    private void init(Context context, AttributeSet attributeSet) {
         Resources res = context.getResources();
 
         mMode = Mode.ENDLESS;
@@ -79,6 +80,20 @@ public class ActionProcessButton extends ProcessButton {
         mColor2 = res.getColor(R.color.holo_green_light);
         mColor3 = res.getColor(R.color.holo_orange_light);
         mColor4 = res.getColor(R.color.holo_red_light);
+
+        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.ProcessButton);
+        if (attr == null) {
+            return;
+        }
+
+        try {
+            mColor1 = attr.getColor(R.styleable.ActionProcessButton_pb_progress_color_1, mColor1);
+            mColor2 = attr.getColor(R.styleable.ActionProcessButton_pb_progress_color_2, mColor2);
+            mColor3 = attr.getColor(R.styleable.ActionProcessButton_pb_progress_color_3, mColor3);
+            mColor4 = attr.getColor(R.styleable.ActionProcessButton_pb_progress_color_4, mColor4);
+        } finally {
+            attr.recycle();
+        }
     }
 
     public void setMode(Mode mode) {

@@ -1,4 +1,11 @@
 <resources>
+    <declare-styleable name="ActionProcessButton">
+        <attr name="pb_progress_color_1" format="string|reference" />
+        <attr name="pb_progress_color_2" format="string|reference" />
+        <attr name="pb_progress_color_3" format="string|reference" />
+        <attr name="pb_progress_color_4" format="color|reference" />
+    </declare-styleable>
+
     <declare-styleable name="ProcessButton">
         <attr name="pb_textProgress" format="string|reference" />
         <attr name="pb_textComplete" format="string|reference" />
@@ -14,4 +21,9 @@
         <attr name="pb_colorDisabled" format="color|reference" />
         <attr name="pb_cornerRadius" format="dimension|reference" />
     </declare-styleable>
+
+    <declare-styleable name="IconButton">
+        <attr name="pb_icon" format="color|reference" />
+    </declare-styleable>
+
 </resources>
