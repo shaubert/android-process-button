@@ -1,15 +1,13 @@
 package com.dd.processbutton.iml;
 
 import android.content.res.TypedArray;
+import android.graphics.*;
+import android.graphics.drawable.ColorDrawable;
 import com.dd.processbutton.ProcessButton;
 import com.dd.processbutton.R;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -52,9 +50,13 @@ public class ActionProcessButton extends ProcessButton {
     private int mColor3;
     private int mColor4;
 
+    private ColorDrawable overlay;
+
     public enum Mode {
         PROGRESS, ENDLESS;
     }
+
+    private Rect rect = new Rect();
 
     public ActionProcessButton(Context context) {
         super(context);
@@ -74,6 +76,8 @@ public class ActionProcessButton extends ProcessButton {
     private void init(Context context, AttributeSet attributeSet) {
         Resources res = context.getResources();
 
+        overlay = new ColorDrawable(Color.argb(80, 0, 0, 0));
+
         mMode = Mode.ENDLESS;
 
         mColor1 = res.getColor(R.color.holo_blue_bright);
@@ -81,7 +85,7 @@ public class ActionProcessButton extends ProcessButton {
         mColor3 = res.getColor(R.color.holo_orange_light);
         mColor4 = res.getColor(R.color.holo_red_light);
 
-        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.ProcessButton);
+        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.ActionProcessButton);
         if (attr == null) {
             return;
         }
@@ -127,7 +131,7 @@ public class ActionProcessButton extends ProcessButton {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if (mProgressBar != null) {
-            setupProgressBarBounds();
+            getProgressBounds(rect);
         }
     }
 
@@ -135,9 +139,11 @@ public class ActionProcessButton extends ProcessButton {
         float scale = (float) getProgress() / (float) getMaxProgress();
         float indicatorWidth = (float) getMeasuredWidth() * scale;
 
-        double indicatorHeightPercent = 0.05; // 5%
-        int bottom = (int) (getMeasuredHeight() - getMeasuredHeight() * indicatorHeightPercent);
-        getProgressDrawable().setBounds(0, bottom, (int) indicatorWidth, getMeasuredHeight());
+        getProgressBounds(rect);
+        overlay.setBounds(rect.left, rect.top, rect.right, rect.bottom);
+        overlay.draw(canvas);
+
+        getProgressDrawable().setBounds(rect.left, rect.top, (int) indicatorWidth, rect.bottom);
         getProgressDrawable().draw(canvas);
     }
 
@@ -155,9 +161,14 @@ public class ActionProcessButton extends ProcessButton {
     }
 
     private void setupProgressBarBounds() {
-        double indicatorHeight = getDimension(R.dimen.layer_padding);
-        int bottom = (int) (getMeasuredHeight() - indicatorHeight);
-        mProgressBar.setBounds(0, bottom, getMeasuredWidth(), getMeasuredHeight());
+        getProgressBounds(rect);
+        mProgressBar.setBounds(rect.left, rect.top, rect.right, rect.bottom);
+    }
+
+    private void getProgressBounds(Rect rect) {
+        double indicatorHeightPercent = 0.08; // 5%
+        int bottom = (int) (getMeasuredHeight() - getMeasuredHeight() * indicatorHeightPercent);
+        rect.set(0, bottom, getMeasuredWidth(), getMeasuredHeight());
     }
 
     public static class ProgressBar {
