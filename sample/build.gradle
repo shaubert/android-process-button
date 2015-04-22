@@ -18,12 +18,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 22
         applicationId project.PACKAGE_NAME
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME

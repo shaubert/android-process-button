@@ -106,6 +106,7 @@ public class FlatButton extends Button {
         return drawableDisabled;
     }
 
+    @SuppressLint("NewApi")
     protected void setColor(GradientDrawable drawable, TypedArray attr, int index, int defaultColor) {
         ColorStateList stateList = getColor(attr, index, defaultColor);
         if (Build.VERSION.SDK_INT >= 21) {

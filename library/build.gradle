@@ -14,7 +14,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 22
     buildToolsVersion '21.1.2'
 
     defaultConfig {
@@ -26,8 +26,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:support-v4:22.0.0'
 }
 
 // Used to push in maven
-//apply from: '../maven_push.gradle'
+apply from: '../maven_push.gradle'
