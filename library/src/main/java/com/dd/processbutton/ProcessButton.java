@@ -70,7 +70,7 @@ public abstract class ProcessButton extends FlatButton {
         mErrorDrawable.setCornerRadius(getCornerRadius());
 
         if (attrs != null) {
-            initAttributes(context, attrs);
+            initAttributes(attrs);
         }
 
         super.setOnClickListener(new OnClickListener() {
@@ -92,8 +92,8 @@ public abstract class ProcessButton extends FlatButton {
         });
     }
 
-    private void initAttributes(Context context, AttributeSet attributeSet) {
-        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.ProcessButton);
+    private void initAttributes(AttributeSet attributeSet) {
+        TypedArray attr = getTypedArray(attributeSet, R.styleable.ProcessButton);
 
         if (attr == null) {
             return;

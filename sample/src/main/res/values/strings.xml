@@ -10,6 +10,8 @@
     <string name="Loading">Loading..</string>
     <string name="Question">How are you?</string>
     <string name="Send">Send</string>
+    <string name="text_on">Private</string>
+    <string name="text_off">Public</string>
     <string name="Done">Done</string>
     <string name="Upload">Upload</string>
     <string name="Beautiful_Picture">Beautiful Picture</string>

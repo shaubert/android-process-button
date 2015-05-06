@@ -85,7 +85,7 @@ public class ActionProcessButton extends ProcessButton {
         mColor3 = res.getColor(R.color.holo_orange_light);
         mColor4 = res.getColor(R.color.holo_red_light);
 
-        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.ActionProcessButton);
+        TypedArray attr = getTypedArray(attributeSet, R.styleable.ActionProcessButton);
         if (attr == null) {
             return;
         }

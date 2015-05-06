@@ -1,32 +1,40 @@
 package com.dd.processbutton;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.Button;
+import android.widget.ToggleButton;
 
-public class FlatButton extends Button {
+public class FlatToggleButton extends ToggleButton {
 
     private Drawable mDrawable;
     private CharSequence mNormalText;
     private float cornerRadius;
     private BackgroundBuilder backgroundBuilder;
 
-    public FlatButton(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public FlatToggleButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
-    public FlatButton(Context context, AttributeSet attrs) {
+    public FlatToggleButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    public FlatToggleButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public FlatButton(Context context) {
+    public FlatToggleButton(Context context) {
         super(context);
         init(context, null);
     }
@@ -104,6 +112,11 @@ public class FlatButton extends Button {
     @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     public void setBackgroundCompat(Drawable drawable) {
-        BackgroundBuilder.setBackgroundCompat(this, drawable);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            setBackground(drawable);
+        } else {
+            setBackgroundDrawable(drawable);
+        }
     }
+
 }
