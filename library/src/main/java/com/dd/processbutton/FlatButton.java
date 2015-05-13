@@ -6,15 +6,20 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.Button;
 
 public class FlatButton extends Button {
 
     private Drawable mDrawable;
-    private CharSequence mNormalText;
     private float cornerRadius;
     private BackgroundBuilder backgroundBuilder;
+
+    private boolean hasSavedText;
+    private String mSavedText;
 
     public FlatButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -39,7 +44,7 @@ public class FlatButton extends Button {
             mDrawable = getBackground();
         }
 
-        mNormalText = getText().toString();
+        mSavedText = getText().toString();
         setBackgroundCompat(mDrawable);
     }
 
@@ -67,8 +72,20 @@ public class FlatButton extends Button {
         return mDrawable;
     }
 
-    public CharSequence getNormalText() {
-        return mNormalText;
+    protected void saveTextIfNotYet() {
+        if (!hasSavedText) {
+            hasSavedText = true;
+            mSavedText = getText().toString();
+        }
+    }
+
+    protected void restoreText() {
+        if (hasSavedText) {
+            setText(mSavedText);
+
+            hasSavedText = false;
+            mSavedText = null;
+        }
     }
 
     protected float getDimension(int id) {
@@ -105,5 +122,67 @@ public class FlatButton extends Button {
     @SuppressLint("NewApi")
     public void setBackgroundCompat(Drawable drawable) {
         BackgroundBuilder.setBackgroundCompat(this, drawable);
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState savedState = new SavedState(superState);
+        savedState.savedText = mSavedText;
+        savedState.hasSavedText = hasSavedText;
+
+        return savedState;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof SavedState) {
+            SavedState savedState = (SavedState) state;
+            mSavedText = savedState.savedText;
+            hasSavedText = savedState.hasSavedText;
+            super.onRestoreInstanceState(savedState.getSuperState());
+        } else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    /**
+     * A {@link android.os.Parcelable} representing the {@link com.dd.processbutton.FlatButton}'s
+     * state.
+     */
+    public static class SavedState extends BaseSavedState {
+
+        private String savedText;
+        private boolean hasSavedText;
+
+        public SavedState(Parcelable parcel) {
+            super(parcel);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            savedText = in.readString();
+            hasSavedText = in.readInt() > 0;
+        }
+
+        @Override
+        public void writeToParcel(@NonNull Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeString(savedText);
+            out.writeInt(hasSavedText ? 1 : 0);
+        }
+
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 }

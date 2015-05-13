@@ -149,6 +149,22 @@ public abstract class ProcessButton extends FlatButton {
         invalidate();
     }
 
+    public void setNormalState() {
+        setProgress(getMinProgress());
+    }
+
+    public void setCompleteState() {
+        setProgress(getMaxProgress());
+    }
+
+    public void setErrorState() {
+        setProgress(getMinProgress() - 1);
+    }
+
+    public void setLoadingState() {
+        setProgress(getMinProgress() + 1);
+    }
+
     public boolean isErrorState() {
         return mProgress < mMinProgress;
     }
@@ -167,6 +183,7 @@ public abstract class ProcessButton extends FlatButton {
 
     protected void onErrorState() {
         if(getErrorText() != null) {
+            saveTextIfNotYet();
             setText(getErrorText());
         }
         setBackgroundCompat(getErrorDrawable());
@@ -175,6 +192,7 @@ public abstract class ProcessButton extends FlatButton {
 
     protected void onProgress() {
         if(getLoadingText() != null) {
+            saveTextIfNotYet();
             setText(getLoadingText());
         }
         setBackgroundCompat(getNormalDrawable());
@@ -183,6 +201,7 @@ public abstract class ProcessButton extends FlatButton {
 
     protected void onCompleteState() {
         if(getCompleteText() != null) {
+            saveTextIfNotYet();
             setText(getCompleteText());
         }
         setBackgroundCompat(getCompleteDrawable());
@@ -190,9 +209,7 @@ public abstract class ProcessButton extends FlatButton {
     }
 
     protected void onNormalState() {
-        if(getNormalText() != null) {
-            setText(getNormalText());
-        }
+        restoreText();
         setBackgroundCompat(getNormalDrawable());
         cancelReturnToNormalTask();
     }
