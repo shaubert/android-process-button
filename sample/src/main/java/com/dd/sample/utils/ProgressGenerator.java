@@ -22,6 +22,7 @@ public class ProgressGenerator {
 
     public void start(final ProcessButton button) {
         final Handler handler = new Handler();
+        button.setProgress(1);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

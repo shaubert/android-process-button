@@ -57,7 +57,7 @@ public class BackgroundBuilder {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private RippleDrawable setupDrawableV21(TypedArray attr, int cornerRadius) {
+    private Drawable setupDrawableV21(TypedArray attr, int cornerRadius) {
         StateListDrawable stateListDrawable = new StateListDrawable();
 
         stateListDrawable.addState(new int[]{-android.R.attr.state_enabled},
