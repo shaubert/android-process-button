@@ -99,12 +99,10 @@ public class ActionProcessButton extends ProcessButton {
 
         SmoothProgressDrawable.Builder builder = (new SmoothProgressDrawable.Builder(context))
                 .sectionsCount(2)
-//                .separatorLength(4)
                 .speed(2f)
                 .progressiveStart(true)
                 .progressiveStartSpeed(2.5f)
                 .progressiveStopSpeed(2.5f)
-                .generateBackgroundUsingColors()
                 .colors(new int[] { mColor1, mColor2, mColor3, mColor4 });
         mEndlessProgressDrawable = builder.build();
         mEndlessProgressDrawable.setCallback(this);
@@ -146,6 +144,8 @@ public class ActionProcessButton extends ProcessButton {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
         if (isProgressState() && mMode == Mode.ENDLESS) {
             if (!mEndlessProgressDrawable.isRunning()) {
                 mEndlessProgressDrawable.start();
@@ -153,8 +153,6 @@ public class ActionProcessButton extends ProcessButton {
         } else {
             mEndlessProgressDrawable.stop();
         }
-
-        super.onDraw(canvas);
     }
 
     private void drawLineProgress(Canvas canvas) {
@@ -173,7 +171,11 @@ public class ActionProcessButton extends ProcessButton {
         getProgressBounds(rect);
         mEndlessProgressDrawable.setBounds(rect);
         mEndlessProgressDrawable.setStrokeWidth(rect.height());
-        mEndlessProgressDrawable.draw(canvas);
+        if (mEndlessProgressDrawable.isRunning()) {
+            int state = canvas.save();
+            mEndlessProgressDrawable.draw(canvas);
+            canvas.restoreToCount(state);
+        }
     }
 
     private void getProgressBounds(Rect rect) {

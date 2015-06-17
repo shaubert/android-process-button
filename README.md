@@ -8,7 +8,7 @@ Added support of disabled state and ripple drawable.
         maven{url "https://github.com/shaubert/maven-repo/raw/master/releases"}
     }
     dependencies {
-        compile 'com.shaubert.android-process-button:library:1.2'
+        compile 'com.shaubert.android-process-button:library:1.2.1'
     }
 
 
