@@ -138,9 +138,9 @@ public class FlatButton extends Button {
     public void onRestoreInstanceState(Parcelable state) {
         if (state instanceof SavedState) {
             SavedState savedState = (SavedState) state;
+            super.onRestoreInstanceState(savedState.getSuperState());
             mSavedText = savedState.savedText;
             hasSavedText = savedState.hasSavedText;
-            super.onRestoreInstanceState(savedState.getSuperState());
         } else {
             super.onRestoreInstanceState(state);
         }
@@ -159,7 +159,7 @@ public class FlatButton extends Button {
             super(parcel);
         }
 
-        private SavedState(Parcel in) {
+        protected SavedState(Parcel in) {
             super(in);
             savedText = in.readString();
             hasSavedText = in.readInt() > 0;

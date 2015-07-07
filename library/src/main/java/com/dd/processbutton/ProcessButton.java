@@ -320,9 +320,8 @@ public abstract class ProcessButton extends FlatButton {
     public void onRestoreInstanceState(Parcelable state) {
         if (state instanceof SavedState) {
             SavedState savedState = (SavedState) state;
-            mProgress = savedState.mProgress;
             super.onRestoreInstanceState(savedState.getSuperState());
-            setProgress(mProgress);
+            setProgress(savedState.mProgress);
         } else {
             super.onRestoreInstanceState(state);
         }
@@ -332,7 +331,7 @@ public abstract class ProcessButton extends FlatButton {
      * A {@link android.os.Parcelable} representing the {@link com.dd.processbutton.ProcessButton}'s
      * state.
      */
-    public static class SavedState extends BaseSavedState {
+    public static class SavedState extends FlatButton.SavedState {
 
         private int mProgress;
 
@@ -340,7 +339,7 @@ public abstract class ProcessButton extends FlatButton {
             super(parcel);
         }
 
-        private SavedState(Parcel in) {
+        protected SavedState(Parcel in) {
             super(in);
             mProgress = in.readInt();
         }
