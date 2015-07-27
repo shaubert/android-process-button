@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.Button;
 
@@ -136,44 +135,59 @@ public class FlatButton extends Button {
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
-        if (state instanceof SavedState) {
-            SavedState savedState = (SavedState) state;
-            super.onRestoreInstanceState(savedState.getSuperState());
-            mSavedText = savedState.savedText;
-            hasSavedText = savedState.hasSavedText;
-        } else {
-            super.onRestoreInstanceState(state);
-        }
+        SavedState savedState = (SavedState) state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+        mSavedText = savedState.savedText;
+        hasSavedText = savedState.hasSavedText;
     }
 
-    /**
-     * A {@link android.os.Parcelable} representing the {@link com.dd.processbutton.FlatButton}'s
-     * state.
-     */
-    public static class SavedState extends BaseSavedState {
+    static class SavedState implements Parcelable {
+        public static final SavedState EMPTY_STATE = new SavedState() {
+        };
 
         private String savedText;
         private boolean hasSavedText;
 
-        public SavedState(Parcelable parcel) {
-            super(parcel);
+        // This keeps the parent(RecyclerView)'s state
+        Parcelable superState;
+
+        SavedState() {
+            superState = null;
+        }
+
+        protected SavedState(Parcelable superState) {
+            this.superState = superState != EMPTY_STATE ? superState : null;
         }
 
         protected SavedState(Parcel in) {
-            super(in);
+            // Parcel 'in' has its parent(RecyclerView)'s saved state.
+            // To restore it, class loader that loaded RecyclerView is required.
+            Parcelable superState = in.readParcelable(getClass().getClassLoader());
+            this.superState = superState != null ? superState : EMPTY_STATE;
+
             savedText = in.readString();
             hasSavedText = in.readInt() > 0;
         }
 
         @Override
-        public void writeToParcel(@NonNull Parcel out, int flags) {
-            super.writeToParcel(out, flags);
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeParcelable(superState, flags);
+
             out.writeString(savedText);
             out.writeInt(hasSavedText ? 1 : 0);
         }
 
-        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+        public Parcelable getSuperState() {
+            return superState;
+        }
 
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
             @Override
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
@@ -185,4 +199,5 @@ public class FlatButton extends Button {
             }
         };
     }
+
 }
