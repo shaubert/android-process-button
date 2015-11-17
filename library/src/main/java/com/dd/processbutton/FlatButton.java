@@ -1,11 +1,13 @@
 package com.dd.processbutton;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -20,9 +22,9 @@ public class FlatButton extends Button {
     private boolean hasSavedText;
     private String mSavedText;
 
-    public FlatButton(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context, attrs);
+    public FlatButton(Context context) {
+        super(context);
+        init(context, null);
     }
 
     public FlatButton(Context context, AttributeSet attrs) {
@@ -30,9 +32,15 @@ public class FlatButton extends Button {
         init(context, attrs);
     }
 
-    public FlatButton(Context context) {
-        super(context);
-        init(context, null);
+    public FlatButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public FlatButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -54,7 +62,7 @@ public class FlatButton extends Button {
         }
 
         try {
-            float defValue = backgroundBuilder.getDimension(R.dimen.corner_radius);
+            float defValue = backgroundBuilder.getDimension(R.dimen.pb_library_corner_radius);
             cornerRadius = attr.getDimension(R.styleable.FlatButton_pb_cornerRadius, defValue);
             mDrawable = backgroundBuilder.createBackground(attributeSet);
         } finally {

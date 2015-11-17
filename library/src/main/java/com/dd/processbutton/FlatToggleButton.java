@@ -18,9 +18,13 @@ public class FlatToggleButton extends ToggleButton {
     private float cornerRadius;
     private BackgroundBuilder backgroundBuilder;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FlatToggleButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    public FlatToggleButton(Context context) {
+        super(context);
+        init(context, null);
+    }
+
+    public FlatToggleButton(Context context, AttributeSet attrs) {
+        super(context, attrs);
         init(context, attrs);
     }
 
@@ -29,14 +33,10 @@ public class FlatToggleButton extends ToggleButton {
         init(context, attrs);
     }
 
-    public FlatToggleButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public FlatToggleButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
-    }
-
-    public FlatToggleButton(Context context) {
-        super(context);
-        init(context, null);
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -58,7 +58,7 @@ public class FlatToggleButton extends ToggleButton {
         }
 
         try {
-            float defValue = backgroundBuilder.getDimension(R.dimen.corner_radius);
+            float defValue = backgroundBuilder.getDimension(R.dimen.pb_library_corner_radius);
             cornerRadius = attr.getDimension(R.styleable.FlatButton_pb_cornerRadius, defValue);
             mDrawable = backgroundBuilder.createBackground(attributeSet);
         } finally {

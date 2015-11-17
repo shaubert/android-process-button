@@ -26,7 +26,7 @@ public class BackgroundBuilder {
         }
 
         try {
-            float defValue = getDimension(R.dimen.corner_radius);
+            float defValue = getDimension(R.dimen.pb_library_corner_radius);
             int cornerRadius = (int) attr.getDimension(R.styleable.FlatButton_pb_cornerRadius, defValue);
 
             if (Build.VERSION.SDK_INT >= 21) {
@@ -51,7 +51,7 @@ public class BackgroundBuilder {
         stateListDrawable.addState(new int[]{android.R.attr.state_selected},
                 createPressedDrawable(attr, cornerRadius));
         stateListDrawable.addState(new int[]{},
-                createNormalDrawable(attr, cornerRadius));
+                createNormalDrawableWithShadow(attr, cornerRadius));
 
         return stateListDrawable;
     }
@@ -65,41 +65,57 @@ public class BackgroundBuilder {
         stateListDrawable.addState(new int[]{},
                 createNormalDrawable(attr, cornerRadius));
 
-        int blueDark = getColor(R.color.blue_pressed);
+        int blueDark = getColor(R.color.pb_library_blue_pressed);
         ColorStateList color = getColor(attr, R.styleable.FlatButton_pb_colorPressed, blueDark);
 
         return new RippleDrawable(color, stateListDrawable, new ColorDrawable(Color.WHITE));
     }
 
-    private Drawable createNormalDrawableV21(TypedArray attr, int cornerRadius) {
+    private Drawable createNormalDrawable(TypedArray attr, int cornerRadius) {
+        boolean useShadow = Build.VERSION.SDK_INT >= 21;
+        if (!useShadow) {
+            int blueNormal = getColor(R.color.pb_library_blue_normal);
+            ColorStateList normalColor = getColor(attr, R.styleable.FlatButton_pb_colorNormal, blueNormal);
+            int defaultColor = normalColor.getDefaultColor();
+            useShadow = Color.alpha(defaultColor) != 0xFF;
+        }
+
+        if (useShadow) {
+            return createNormalDrawableWithoutShadow(attr, cornerRadius);
+        } else {
+            return createNormalDrawableWithShadow(attr, cornerRadius);
+        }
+    }
+
+    private Drawable createNormalDrawableWithoutShadow(TypedArray attr, int cornerRadius) {
         GradientDrawable drawableNormal =
                 (GradientDrawable) getDrawable(R.drawable.rect_normal).mutate();
         drawableNormal.setCornerRadius(cornerRadius);
-        int blueNormal = getColor(R.color.blue_normal);
+        int blueNormal = getColor(R.color.pb_library_blue_normal);
         setColor(drawableNormal, attr, R.styleable.FlatButton_pb_colorNormal, blueNormal);
         return drawableNormal;
     }
 
-    private Drawable createNormalDrawable(TypedArray attr, int cornerRadius) {
+    private Drawable createNormalDrawableWithShadow(TypedArray attr, int cornerRadius) {
         if (Build.VERSION.SDK_INT >= 21) {
-            return createNormalDrawableV21(attr, cornerRadius);
+            return createNormalDrawableWithoutShadow(attr, cornerRadius);
         }
 
         LayerDrawable drawableNormal =
-                (LayerDrawable) getDrawable(R.drawable.rect_normal).mutate();
+                (LayerDrawable) getDrawable(R.drawable.rect_normal_with_shadow).mutate();
 
         GradientDrawable drawableTop =
                 (GradientDrawable) drawableNormal.getDrawable(0).mutate();
         drawableTop.setCornerRadius(cornerRadius);
 
-        int blueDark = getColor(R.color.blue_pressed);
-        setColor(drawableTop, attr, R.styleable.FlatButton_pb_colorPressed, blueDark);
+        int shadowColor = getColor(R.color.pb_library_shadow);
+        setColor(drawableTop, attr, R.styleable.FlatButton_pb_colorShadow, shadowColor);
 
         GradientDrawable drawableBottom =
                 (GradientDrawable) drawableNormal.getDrawable(1).mutate();
         drawableBottom.setCornerRadius(cornerRadius);
 
-        int blueNormal = getColor(R.color.blue_normal);
+        int blueNormal = getColor(R.color.pb_library_blue_normal);
         setColor(drawableBottom, attr, R.styleable.FlatButton_pb_colorNormal, blueNormal);
         return drawableNormal;
     }
@@ -109,7 +125,7 @@ public class BackgroundBuilder {
                 (GradientDrawable) getDrawable(R.drawable.rect_pressed).mutate();
         drawablePressed.setCornerRadius(cornerRadius);
 
-        int blueDark = getColor(R.color.blue_pressed);
+        int blueDark = getColor(R.color.pb_library_blue_pressed);
         setColor(drawablePressed, attr, R.styleable.FlatButton_pb_colorPressed, blueDark);
 
         return drawablePressed;
@@ -120,7 +136,7 @@ public class BackgroundBuilder {
                 (GradientDrawable) getDrawable(R.drawable.rect_disabled).mutate();
         drawableDisabled.setCornerRadius(cornerRadius);
 
-        int blueDisabled = getColor(R.color.blue_disabled);
+        int blueDisabled = getColor(R.color.pb_library_blue_disabled);
         setColor(drawableDisabled, attr, R.styleable.FlatButton_pb_colorPressed, blueDisabled);
 
         return drawableDisabled;
@@ -130,13 +146,16 @@ public class BackgroundBuilder {
         return context.getResources().getDimension(id);
     }
 
-    @SuppressLint("NewApi")
     public static void setColor(GradientDrawable drawable, TypedArray attr, int index, int defaultColor) {
-        ColorStateList stateList = getColor(attr, index, defaultColor);
+        setColor(drawable, getColor(attr, index, defaultColor));
+    }
+
+    @SuppressLint("NewApi")
+    public static void setColor(GradientDrawable drawable, ColorStateList color) {
         if (Build.VERSION.SDK_INT >= 21) {
-            drawable.setColor(stateList);
+            drawable.setColor(color);
         } else {
-            drawable.setColor(stateList.getDefaultColor());
+            drawable.setColor(color.getDefaultColor());
         }
     }
 
@@ -161,6 +180,7 @@ public class BackgroundBuilder {
         return context.obtainStyledAttributes(attributeSet, attr, 0, 0);
     }
 
+    @SuppressWarnings("deprecation")
     public Drawable getDrawable(int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return context.getDrawable(id);

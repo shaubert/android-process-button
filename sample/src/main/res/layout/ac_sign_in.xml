@@ -35,10 +35,10 @@
             android:text="@string/Sign_in"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            custom:pb_colorComplete="@color/green_complete"
-            custom:pb_colorNormal="@color/blue_normal"
-            custom:pb_colorPressed="@color/blue_pressed"
-            custom:pb_colorProgress="@color/purple_progress"
+            custom:pb_colorComplete="@color/pb_library_green_complete"
+            custom:pb_colorNormal="@color/pb_library_blue_normal"
+            custom:pb_colorPressed="@color/pb_library_blue_pressed"
+            custom:pb_colorProgress="@color/pb_library_purple_progress"
             custom:pb_textComplete="@string/Success"
             custom:pb_textProgress="@string/Loading" />
 

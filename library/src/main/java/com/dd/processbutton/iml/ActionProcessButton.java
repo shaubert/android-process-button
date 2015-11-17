@@ -71,6 +71,11 @@ public class ActionProcessButton extends ProcessButton {
         init(context, attrs);
     }
 
+    public ActionProcessButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs);
+    }
+
     private void init(Context context, AttributeSet attributeSet) {
         Resources res = context.getResources();
 
@@ -78,10 +83,10 @@ public class ActionProcessButton extends ProcessButton {
 
         mMode = Mode.ENDLESS;
 
-        mColor1 = res.getColor(R.color.holo_blue_bright);
-        mColor2 = res.getColor(R.color.holo_green_light);
-        mColor3 = res.getColor(R.color.holo_orange_light);
-        mColor4 = res.getColor(R.color.holo_red_light);
+        mColor1 = res.getColor(R.color.pb_library_holo_blue_bright);
+        mColor2 = res.getColor(R.color.pb_library_holo_green_light);
+        mColor3 = res.getColor(R.color.pb_library_holo_orange_light);
+        mColor4 = res.getColor(R.color.pb_library_holo_red_light);
 
         TypedArray attr = getTypedArray(attributeSet, R.styleable.ActionProcessButton);
         if (attr == null) {

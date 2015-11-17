@@ -44,6 +44,10 @@ public class SubmitProcessButton extends ProcessButton {
         super(context, attrs, defStyle);
     }
 
+    public SubmitProcessButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
     @Override
     public void drawProgress(Canvas canvas) {
         float scale = (float) getProgress() / (float) getMaxProgress();

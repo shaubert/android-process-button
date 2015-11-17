@@ -41,9 +41,9 @@ public abstract class ProcessButton extends FlatButton {
         }
     };
 
-    public ProcessButton(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context, attrs);
+    public ProcessButton(Context context) {
+        super(context);
+        init(context, null);
     }
 
     public ProcessButton(Context context, AttributeSet attrs) {
@@ -51,9 +51,14 @@ public abstract class ProcessButton extends FlatButton {
         init(context, attrs);
     }
 
-    public ProcessButton(Context context) {
-        super(context);
-        init(context, null);
+    public ProcessButton(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context, attrs);
+    }
+
+    public ProcessButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -107,13 +112,13 @@ public abstract class ProcessButton extends FlatButton {
             autoResumeToNormalState = attr.getBoolean(R.styleable.ProcessButton_pb_autoResumeToNormal, autoResumeToNormalState);
             autoResumeToNormalStateDelay = attr.getInt(R.styleable.ProcessButton_pb_autoResumeToNormalDelay, autoResumeToNormalStateDelay);
 
-            int purple = getColor(R.color.purple_progress);
+            int purple = getColor(R.color.pb_library_purple_progress);
             setColor(mProgressDrawable, attr, R.styleable.ProcessButton_pb_colorProgress, purple);
 
-            int green = getColor(R.color.green_complete);
+            int green = getColor(R.color.pb_library_green_complete);
             setColor(mCompleteDrawable, attr, R.styleable.ProcessButton_pb_colorComplete, green);
 
-            int red = getColor(R.color.red_error);
+            int red = getColor(R.color.pb_library_red_error);
             setColor(mErrorDrawable, attr, R.styleable.ProcessButton_pb_colorError, red);
         } finally {
             attr.recycle();

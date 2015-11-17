@@ -17,15 +17,9 @@ public class FlatImageButton extends ImageButton {
     private float cornerRadius;
     private BackgroundBuilder backgroundBuilder;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FlatImageButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs);
-    }
-
-    public FlatImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs);
+    public FlatImageButton(Context context) {
+        super(context);
+        init(context, null);
     }
 
     public FlatImageButton(Context context, AttributeSet attrs) {
@@ -33,9 +27,13 @@ public class FlatImageButton extends ImageButton {
         init(context, attrs);
     }
 
-    public FlatImageButton(Context context) {
-        super(context);
-        init(context, null);
+    public FlatImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public FlatImageButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -56,7 +54,7 @@ public class FlatImageButton extends ImageButton {
         }
 
         try {
-            float defValue = backgroundBuilder.getDimension(R.dimen.corner_radius);
+            float defValue = backgroundBuilder.getDimension(R.dimen.pb_library_corner_radius);
             cornerRadius = attr.getDimension(R.styleable.FlatButton_pb_cornerRadius, defValue);
             mDrawable = backgroundBuilder.createBackground(attributeSet);
         } finally {
