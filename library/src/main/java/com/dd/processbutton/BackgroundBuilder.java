@@ -51,7 +51,7 @@ public class BackgroundBuilder {
         stateListDrawable.addState(new int[]{android.R.attr.state_selected},
                 createPressedDrawable(attr, cornerRadius));
         stateListDrawable.addState(new int[]{},
-                createNormalDrawableWithShadow(attr, cornerRadius));
+                createNormalDrawable(attr, cornerRadius));
 
         return stateListDrawable;
     }
@@ -72,15 +72,15 @@ public class BackgroundBuilder {
     }
 
     private Drawable createNormalDrawable(TypedArray attr, int cornerRadius) {
-        boolean useShadow = Build.VERSION.SDK_INT >= 21;
-        if (!useShadow) {
+        boolean withoutShadow = Build.VERSION.SDK_INT >= 21;
+        if (!withoutShadow) {
             int blueNormal = getColor(R.color.pb_library_blue_normal);
             ColorStateList normalColor = getColor(attr, R.styleable.FlatButton_pb_colorNormal, blueNormal);
             int defaultColor = normalColor.getDefaultColor();
-            useShadow = Color.alpha(defaultColor) != 0xFF;
+            withoutShadow = Color.alpha(defaultColor) != 0xFF;
         }
 
-        if (useShadow) {
+        if (withoutShadow) {
             return createNormalDrawableWithoutShadow(attr, cornerRadius);
         } else {
             return createNormalDrawableWithShadow(attr, cornerRadius);
