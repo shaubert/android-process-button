@@ -24,6 +24,7 @@
         <attr name="pb_colorNormal" format="color|reference" />
         <attr name="pb_colorDisabled" format="color|reference" />
         <attr name="pb_cornerRadius" format="dimension|reference" />
+        <attr name="pb_roundCorners" format="boolean|reference" />
     </declare-styleable>
 
 </resources>

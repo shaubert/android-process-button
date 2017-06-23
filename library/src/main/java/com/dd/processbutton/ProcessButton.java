@@ -12,6 +12,8 @@ import android.view.View;
 
 public abstract class ProcessButton extends FlatButton {
 
+    private boolean initialized;
+
     private int mProgress;
     private int mMaxProgress;
     private int mMinProgress;
@@ -56,12 +58,9 @@ public abstract class ProcessButton extends FlatButton {
         init(context, attrs);
     }
 
-    public ProcessButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs);
-    }
-
     private void init(Context context, AttributeSet attrs) {
+        if (initialized) return;
+
         mMinProgress = 0;
         mMaxProgress = 100;
 
@@ -95,6 +94,8 @@ public abstract class ProcessButton extends FlatButton {
                 }
             }
         });
+
+        initialized = true;
     }
 
     private void initAttributes(AttributeSet attributeSet) {
@@ -123,6 +124,15 @@ public abstract class ProcessButton extends FlatButton {
         } finally {
             attr.recycle();
         }
+    }
+
+    @Override
+    public void setCornerRadius(int cornerRadius) {
+        super.setCornerRadius(cornerRadius);
+
+        mProgressDrawable.setCornerRadius(cornerRadius);
+        mCompleteDrawable.setCornerRadius(cornerRadius);
+        mErrorDrawable.setCornerRadius(cornerRadius);
     }
 
     @Override

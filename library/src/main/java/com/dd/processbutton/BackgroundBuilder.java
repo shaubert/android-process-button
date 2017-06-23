@@ -11,6 +11,9 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BackgroundBuilder {
 
     private Context context;
@@ -27,7 +30,7 @@ public class BackgroundBuilder {
 
         try {
             float defValue = getDimension(R.dimen.pb_library_corner_radius);
-            int cornerRadius = (int) attr.getDimension(R.styleable.FlatButton_pb_cornerRadius, defValue);
+            float cornerRadius = attr.getDimension(R.styleable.FlatButton_pb_cornerRadius, defValue);
 
             if (Build.VERSION.SDK_INT >= 21) {
                 return setupDrawableV21(attr, cornerRadius);
@@ -39,8 +42,23 @@ public class BackgroundBuilder {
         }
     }
 
-    private StateListDrawable setupDrawable(TypedArray attr, int cornerRadius) {
-        StateListDrawable stateListDrawable = new StateListDrawable();
+    public void setCornerRadius(Drawable drawable, float cornerRadius) {
+        if (drawable instanceof GradientDrawable) {
+            ((GradientDrawable) drawable).setCornerRadius(cornerRadius);
+        } else if (drawable instanceof CustomStateListDrawable) {
+            for (Drawable inner : ((CustomStateListDrawable) drawable).drawables) {
+                setCornerRadius(inner, cornerRadius);
+            }
+        } else if (drawable instanceof LayerDrawable) {
+            LayerDrawable layerDrawable = (LayerDrawable) drawable;
+            for (int i = 0; i < layerDrawable.getNumberOfLayers(); i++) {
+                setCornerRadius(layerDrawable.getDrawable(i), cornerRadius);
+            }
+        }
+    }
+
+    private StateListDrawable setupDrawable(TypedArray attr, float cornerRadius) {
+        CustomStateListDrawable stateListDrawable = new CustomStateListDrawable();
 
         stateListDrawable.addState(new int[]{-android.R.attr.state_enabled},
                 createDisabledDrawable(attr, cornerRadius));
@@ -57,8 +75,8 @@ public class BackgroundBuilder {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private Drawable setupDrawableV21(TypedArray attr, int cornerRadius) {
-        StateListDrawable stateListDrawable = new StateListDrawable();
+    private Drawable setupDrawableV21(TypedArray attr, float cornerRadius) {
+        CustomStateListDrawable stateListDrawable = new CustomStateListDrawable();
 
         stateListDrawable.addState(new int[]{-android.R.attr.state_enabled},
                 createDisabledDrawable(attr, cornerRadius));
@@ -68,10 +86,14 @@ public class BackgroundBuilder {
         int blueDark = getColor(R.color.pb_library_blue_pressed);
         ColorStateList color = getColor(attr, R.styleable.FlatButton_pb_colorPressed, blueDark);
 
-        return new RippleDrawable(color, stateListDrawable, new ColorDrawable(Color.WHITE));
+        GradientDrawable mask = new GradientDrawable();
+        mask.setShape(GradientDrawable.RECTANGLE);
+        mask.setCornerRadius(cornerRadius);
+        mask.setColor(Color.WHITE);
+        return new RippleDrawable(color, stateListDrawable, mask);
     }
 
-    private Drawable createNormalDrawable(TypedArray attr, int cornerRadius) {
+    private Drawable createNormalDrawable(TypedArray attr, float cornerRadius) {
         boolean withoutShadow = Build.VERSION.SDK_INT >= 21;
         if (!withoutShadow) {
             int blueNormal = getColor(R.color.pb_library_blue_normal);
@@ -87,7 +109,7 @@ public class BackgroundBuilder {
         }
     }
 
-    private Drawable createNormalDrawableWithoutShadow(TypedArray attr, int cornerRadius) {
+    private Drawable createNormalDrawableWithoutShadow(TypedArray attr, float cornerRadius) {
         GradientDrawable drawableNormal =
                 (GradientDrawable) getDrawable(R.drawable.rect_normal).mutate();
         drawableNormal.setCornerRadius(cornerRadius);
@@ -96,7 +118,7 @@ public class BackgroundBuilder {
         return drawableNormal;
     }
 
-    private Drawable createNormalDrawableWithShadow(TypedArray attr, int cornerRadius) {
+    private Drawable createNormalDrawableWithShadow(TypedArray attr, float cornerRadius) {
         if (Build.VERSION.SDK_INT >= 21) {
             return createNormalDrawableWithoutShadow(attr, cornerRadius);
         }
@@ -120,7 +142,7 @@ public class BackgroundBuilder {
         return drawableNormal;
     }
 
-    private Drawable createPressedDrawable(TypedArray attr, int cornerRadius) {
+    private Drawable createPressedDrawable(TypedArray attr, float cornerRadius) {
         GradientDrawable drawablePressed =
                 (GradientDrawable) getDrawable(R.drawable.rect_pressed).mutate();
         drawablePressed.setCornerRadius(cornerRadius);
@@ -131,7 +153,7 @@ public class BackgroundBuilder {
         return drawablePressed;
     }
 
-    private Drawable createDisabledDrawable(TypedArray attr, int cornerRadius) {
+    private Drawable createDisabledDrawable(TypedArray attr, float cornerRadius) {
         GradientDrawable drawableDisabled =
                 (GradientDrawable) getDrawable(R.drawable.rect_disabled).mutate();
         drawableDisabled.setCornerRadius(cornerRadius);
@@ -203,5 +225,17 @@ public class BackgroundBuilder {
             view.setBackgroundDrawable(drawable);
         }
         view.setPadding(pL, pT, pR, pB);
+    }
+
+    private static class CustomStateListDrawable extends StateListDrawable {
+
+        List<Drawable> drawables = new ArrayList<>();
+
+        @Override
+        public void addState(int[] stateSet, Drawable drawable) {
+            super.addState(stateSet, drawable);
+            drawables.add(drawable);
+        }
+
     }
 }

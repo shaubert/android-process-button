@@ -1,13 +1,11 @@
 package com.dd.processbutton;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -15,8 +13,11 @@ import android.widget.Button;
 
 public class FlatButton extends Button {
 
+    private boolean initialized;
+
     private Drawable mDrawable;
     private float cornerRadius;
+    private boolean roundCorners;
     private BackgroundBuilder backgroundBuilder;
 
     private boolean hasSavedText;
@@ -37,13 +38,9 @@ public class FlatButton extends Button {
         init(context, attrs);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public FlatButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs);
-    }
-
     private void init(Context context, AttributeSet attrs) {
+        if (initialized) return;
+
         backgroundBuilder = new BackgroundBuilder(context);
         if (attrs != null) {
             initAttributes(attrs);
@@ -53,6 +50,8 @@ public class FlatButton extends Button {
 
         mSavedText = getText().toString();
         setBackgroundCompat(mDrawable);
+
+        initialized = true;
     }
 
     private void initAttributes(AttributeSet attributeSet) {
@@ -64,15 +63,31 @@ public class FlatButton extends Button {
         try {
             float defValue = backgroundBuilder.getDimension(R.dimen.pb_library_corner_radius);
             cornerRadius = attr.getDimension(R.styleable.FlatButton_pb_cornerRadius, defValue);
+            roundCorners = attr.getBoolean(R.styleable.FlatButton_pb_roundCorners, false);
             mDrawable = backgroundBuilder.createBackground(attributeSet);
         } finally {
             attr.recycle();
         }
     }
 
+    public boolean isRoundCorners() {
+        return roundCorners;
+    }
+
+    public void setRoundCorners(boolean roundCorners) {
+        this.roundCorners = roundCorners;
+        if (roundCorners) {
+            calculateCornerRadius();
+        }
+    }
 
     public float getCornerRadius() {
         return cornerRadius;
+    }
+
+    public void setCornerRadius(int cornerRadius) {
+        this.cornerRadius = cornerRadius;
+        backgroundBuilder.setCornerRadius(mDrawable, cornerRadius);
     }
 
     public Drawable getNormalDrawable() {
@@ -118,6 +133,18 @@ public class FlatButton extends Button {
 
     protected Drawable getDrawable(int id) {
         return backgroundBuilder.getDrawable(id);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (changed && roundCorners) {
+            calculateCornerRadius();
+        }
+    }
+
+    private void calculateCornerRadius() {
+        setCornerRadius(Math.abs(getBottom() - getTop()) / 2);
     }
 
     /**

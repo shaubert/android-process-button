@@ -44,10 +44,6 @@ public class GenerateProcessButton extends ProcessButton {
         super(context, attrs, defStyle);
     }
 
-    public GenerateProcessButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     @Override
     public void drawProgress(Canvas canvas) {
         float scale = (float) getProgress() / (float) getMaxProgress();

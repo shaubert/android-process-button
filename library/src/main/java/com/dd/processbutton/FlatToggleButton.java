@@ -13,6 +13,8 @@ import android.widget.ToggleButton;
 
 public class FlatToggleButton extends ToggleButton {
 
+    private boolean initialized;
+
     private Drawable mDrawable;
     private CharSequence mNormalText;
     private float cornerRadius;
@@ -40,6 +42,8 @@ public class FlatToggleButton extends ToggleButton {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        if (initialized) return;
+
         backgroundBuilder = new BackgroundBuilder(context);
         if (attrs != null) {
             initAttributes(attrs);
@@ -49,6 +53,8 @@ public class FlatToggleButton extends ToggleButton {
 
         mNormalText = getText().toString();
         setBackgroundCompat(mDrawable);
+
+        initialized = true;
     }
 
     private void initAttributes(AttributeSet attributeSet) {

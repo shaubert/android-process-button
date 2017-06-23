@@ -39,6 +39,7 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressDrawable;
 
 public class ActionProcessButton extends ProcessButton {
 
+    private boolean initialized;
 
     private Mode mMode;
 
@@ -71,12 +72,9 @@ public class ActionProcessButton extends ProcessButton {
         init(context, attrs);
     }
 
-    public ActionProcessButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs);
-    }
-
     private void init(Context context, AttributeSet attributeSet) {
+        if (initialized) return;
+
         Resources res = context.getResources();
 
         overlay = new ColorDrawable(Color.argb(80, 0, 0, 0));
@@ -111,6 +109,8 @@ public class ActionProcessButton extends ProcessButton {
                 .colors(new int[] { mColor1, mColor2, mColor3, mColor4 });
         mEndlessProgressDrawable = builder.build();
         mEndlessProgressDrawable.setCallback(this);
+
+        initialized = true;
     }
 
     @Override
